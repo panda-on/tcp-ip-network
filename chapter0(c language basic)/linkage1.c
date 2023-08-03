@@ -1,4 +1,5 @@
 #include <stdio.h>
+// add linkage of source file linkage0.c
 #include "linkage0.c"
 
 int main(void)
