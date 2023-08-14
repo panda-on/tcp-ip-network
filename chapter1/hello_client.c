@@ -29,6 +29,9 @@ int main(int argc, char *argv[])
     serv_addr.sin_addr.s_addr = inet_addr(argv[1]);
     serv_addr.sin_port = htons(atoi(argv[2]));
     //调用 connect 函数向服务器发送连接请求
+    // int connect_flag = connect(sock,(struct sockaddr *)&serv_addr, sizeof(serv_addr));
+    // if(connect == -1)
+    //     error_handling("connect() error!");
     if (connect(sock, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) == -1)
         error_handling("connect() error!");
 
