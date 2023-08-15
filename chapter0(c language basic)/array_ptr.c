@@ -19,7 +19,7 @@ int sum2(int* arr, int len)
     {
         res += *(arr + i);
     }
-    return 0;
+    return res;
 }
 
 
@@ -44,10 +44,12 @@ int main(int argc, char const *argv[])
     
     for (size_t i = 0; i < 5; i++)
     {
-        printf("arr2[%zd] is %d", i, *(p+i));
+        printf("arr2[%zd] is %d\n", i, *(p+i));
     }
-    
-    
 
+    printf("The sum of arr is %d\n", sum(arr,sizeof(arr)/sizeof(arr[0])));
+    printf("The sum of arr is %d\n", sum2(arr,sizeof(arr)/sizeof(arr[0])));
+
+    return 0;
 
 }
