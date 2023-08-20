@@ -41,6 +41,8 @@ int main(int argc, char const *argv[])
     puts(s);
 
     printf("\n%s\n", "---------- string array ----------");
+    /* pointer array, using pointer to store the address of every string,
+      instead of using two fixed number to specify the matrix in width and length */
     char *weekdays[] = {
         "Monday",
         "Tuesday",
