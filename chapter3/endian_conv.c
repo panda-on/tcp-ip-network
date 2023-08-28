@@ -7,7 +7,7 @@ int main(int argc, char const *argv[])
     unsigned short net_port;
     unsigned long host_addr=0x12345678;
     unsigned long net_addr;
-
+    /* trans host byte order to network byte order*/
     net_port = htons(host_port);
     net_addr = htonl(host_addr);
 
