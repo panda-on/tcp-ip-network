@@ -8,6 +8,7 @@
 #define OP_SZ 4
 #define RSLT_SZ 4
 void error_handling(char *message);
+int calculate(int opnum, int opreands[], char operator);
 
 /*
     应用层协议设计：
@@ -19,7 +20,8 @@ int main(int argc, char const *argv[])
     int clnt_sock, serv_sock;
     struct sockaddr_in clnt_addr, serv_addr;
     socklen_t clnt_addr_sz;
-    char message[BUF_SZ];
+    // char message[BUF_SZ];
+    char operands[BUF_SZ];
     int op_cnt;
     int result;
     char operator;
@@ -48,35 +50,16 @@ int main(int argc, char const *argv[])
         else
             printf("Connected client %zd \n", i + 1);
 
-        while ((read_len = read(clnt_sock, message, BUF_SZ)) != 0)
-            write(clnt_sock, message, read_len);
+        read(clnt_sock, &op_cnt, 1);
 
-        op_cnt = (int)message[0];
-        operator= message[op_cnt * OP_SZ + 1];
-        if (!strcmp("+", &operator))
+        int len_cnt;
+        while (len_cnt < op_cnt * OP_SZ + 1)
         {
-            for (size_t i = 0; i < op_cnt; i++)
-            {
-                result += *(int *)&message[i * OP_SZ + 1];
-            }
+            read_len = read(clnt_sock, &operands[len_cnt], BUF_SZ - 1);
+            len_cnt += read_len;
         }
-
-        if (!strcmp("-", &operator))
-        {
-            for (size_t i = 0; i < op_cnt; i++)
-            {
-                result -= *(int *)&message[i * OP_SZ + 1];
-            }
-        }
-
-        if (!strcmp("*", &operator))
-        {
-            for (size_t i = 0; i < op_cnt; i++)
-            {
-                result *= *(int *)&message[i * OP_SZ + 1];
-            }
-        }
-        write(clnt_sock, &result, RSLT_SZ);
+        result = calculate(op_cnt, (int *)operands, operands[len_cnt - 1]);
+        write(clnt_sock, (char *)&result, RSLT_SZ);
         close(clnt_sock);
     }
     close(serv_sock);
@@ -88,4 +71,32 @@ void error_handling(char *message)
     fputs(message, stderr);
     fputc('\n', stderr);
     exit(1);
+}
+
+int calculate(int opnum, int operands[], char operator)
+{
+    int result = operands[0], i;
+    switch (operator)
+    {
+    case '+':
+        for (size_t i = 1; i < opnum; i++)
+        {
+            result += operands[i];
+        }
+        break;
+    case '-':
+        for (size_t i = 1; i < opnum; i++)
+        {
+            printf("%d\n",operands[i]);
+            result -= operands[i];
+        }
+        break;
+    case '*':
+        for (size_t i = 1; i < opnum; i++)
+        {
+            result *= operands[i];
+        }
+        break;
+    }
+    return result;
 }
