@@ -21,7 +21,7 @@ int main(int argc, char const *argv[])
     struct sockaddr_in clnt_addr, serv_addr;
     socklen_t clnt_addr_sz;
     // char message[BUF_SZ];
-    char operands[BUF_SZ];
+    char operands[BUFFER_SIZE];
     int op_cnt;
     int result;
     char operator;
@@ -55,7 +55,7 @@ int main(int argc, char const *argv[])
         int len_cnt;
         while (len_cnt < op_cnt * OP_SZ + 1)
         {
-            read_len = read(clnt_sock, &operands[len_cnt], BUF_SZ - 1);
+            read_len = read(clnt_sock, &operands[len_cnt], BUFFER_SIZE - 1);
             len_cnt += read_len;
         }
         result = calculate(op_cnt, (int *)operands, operands[len_cnt - 1]);
