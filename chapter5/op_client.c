@@ -11,7 +11,7 @@
 void error_handling(char *message);
 
 /*
-    1. 向服务端发送操作数和操作符号
+    1. 按照约定的协议向服务端发送操作数和操作符号
     2. 将计算结果打印到控制台
 */
 int main(int argc, char const *argv[])
@@ -19,7 +19,7 @@ int main(int argc, char const *argv[])
     int sock;
     struct sockaddr_in serv_addr;
     socklen_t serv_addr_sz;
-    int operand_cnt;
+    unsigned int operand_cnt;
     char msg[BUF_SIZE];
     int op_cnt;
     int idx;
@@ -33,32 +33,30 @@ int main(int argc, char const *argv[])
     serv_addr.sin_family = PF_INET;
     serv_addr.sin_addr.s_addr = inet_addr(argv[1]);
     serv_addr.sin_port = htons(atoi(argv[2]));
-    serv_addr_sz=sizeof(serv_addr);
+    serv_addr_sz = sizeof(serv_addr);
 
     if (connect(sock, (struct sockaddr *)&serv_addr, serv_addr_sz) == -1)
         error_handling("failed to connect server");
     else
         printf("Connected! \n");
 
-    while (1)
+    fputs("Input Operand Count: \n", stdout);
+    scanf("%d", &operand_cnt);
+    msg[0] = (char)operand_cnt;
+    for (idx = 0; idx < operand_cnt; idx++)
     {
-        fputs("Input Operand Count: \n", stdout);
-        scanf("%d", &operand_cnt);
-        msg[0] = (char)operand_cnt;
-        for (idx = 0; idx < operand_cnt; idx++)
-        {
-            char *tmp[TMP_SZ];
-            int temp;
-            printf("Input Operand %d\n", idx + 1);
-            scanf("%d", (int *)&msg[idx * OP_SZ + 1]);
-        }
-        fgetc(stdin);
-        fputs("Input Operator: \n",stdout);
-        scanf("%c", &msg[OP_SZ * operand_cnt + 1]);
-        write(sock, msg, OP_SZ * operand_cnt + 2);
-        read(sock, &result, RSLT_SZ);
-        printf("Operation result : %d\n", result);
+        char *tmp[TMP_SZ];
+        int temp;
+        printf("Input Operand %d\n", idx + 1);
+        scanf("%d", (int *)&msg[idx * OP_SZ + 1]);
     }
+    fgetc(stdin);
+    fputs("Input Operator: \n", stdout);
+    scanf("%c", &msg[OP_SZ * operand_cnt + 1]);
+    write(sock, msg, OP_SZ * operand_cnt + 2);
+    read(sock, &result, RSLT_SZ);
+    printf("Operation result : %d\n", result);
+    close(sock);
 
     return 0;
 }

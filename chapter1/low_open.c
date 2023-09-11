@@ -9,7 +9,8 @@ int main(void)
     int fd;
     char buf[] = "Let's go!\n";
     
-    fd=open("data.txt",O_CREAT|O_WRONLY|O_TRUNC);
+    // fd=open("data.txt",O_CREAT|O_WRONLY|O_TRUNC);
+    fd=open("/root/tcpdata.txt",O_CREAT|O_WRONLY|O_TRUNC);
     if(fd==-1)
         error_handling("open() error!");
     printf("file descriptor: %d \n", fd);
