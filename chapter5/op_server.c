@@ -12,8 +12,10 @@ int calculate(int opnum, int opreands[], char operator);
 
 /*
     应用层协议设计：
-    1. 通过tcp获取客户端的操作数和操作符
-    2. 将操作数和操作符进行操作，操作完后返回计算结果
+    1. 通过tcp协议获取网络客户端的操作数和操作符
+    2. 将操作数和操作符进行操作，操作完后返回计算结果，可能的操作符号为 + - *
+    3. 应用层协议定义：传输的第一个字节为操作数的个数，紧接着是操作数，每个操作数占4个字节的宽度，最后一个字节是操作符
+        客户端要依据这个顺序发送数据，客户端要按照这个顺序解析数据并执行计算然后返回计算结果
 */
 int main(int argc, char const *argv[])
 {
@@ -100,3 +102,10 @@ int calculate(int opnum, int operands[], char operator)
     }
     return result;
 }
+/*
+    TODO:
+        1. a exception handling logic is needed
+            1.1. check received data if it's fit the application protocal, if the answer is no, 
+                handle it and return a error flag
+            1.2. if the operator hit no case branch, return error flag
+*/
