@@ -23,7 +23,7 @@ int main(int argc, char const *argv[])
     struct sockaddr_in clnt_addr, serv_addr;
     socklen_t clnt_addr_sz;
     // char message[BUF_SZ];
-    char operands[BUFFER_SIZE];
+    char operands[BUF_SZ];
     int op_cnt;
     int result;
     char operator;
@@ -89,7 +89,7 @@ int calculate(int opnum, int operands[], char operator)
     case '-':
         for (size_t i = 1; i < opnum; i++)
         {
-            printf("%d\n",operands[i]);
+            printf("%d\n", operands[i]);
             result -= operands[i];
         }
         break;
@@ -105,7 +105,7 @@ int calculate(int opnum, int operands[], char operator)
 /*
     TODO:
         1. a exception handling logic is needed
-            1.1. check received data if it's fit the application protocal, if the answer is no, 
+            1.1. check received data if it's fit the application protocal, if the answer is no,
                 handle it and return a error flag
             1.2. if the operator hit no case branch, return error flag
 */
