@@ -7,25 +7,29 @@
 #include <fcntl.h>
 
 #define BUFFER_SIZE 1024
-#define FILE_NAME_SZ 128
 #define FULL_PATH_SIZE 256
 
 void error_handling(char *message);
-int recv_file(int sock, char *full_fn);
+// int recv_file(int sock, char *full_fn);
 
 /*
     application protocal:
         first byte send the length of filename
         the following bytes is made of file name
+    steps:
+        #0: read a file name from terminal
+        #1: send file name
+        #2: read file content from server
+        #3: close file
+        #4: close socket
 */
 int main(int argc, char const *argv[])
 {
-    int sock, n, bytes_rcvd;
+    int sock, n, bytes_recv;
     FILE *fd;
     struct sockaddr_in serv_addr;
     socklen_t serv_addr_sz;
-    char fn[FILE_NAME_SZ];
-    char full_path_fn[FULL_PATH_SIZE];
+    char fn[BUFFER_SIZE];
     char buf[BUFFER_SIZE];
 
     sock = socket(AF_INET, SOCK_STREAM, 0);
@@ -45,12 +49,11 @@ int main(int argc, char const *argv[])
 
     fputs("Input file name which you want to get from the server: \n", stdout);
     scanf("%s", fn);
-    sprintf(full_path_fn, "/root/%s", fn);
-    write(sock, full_path_fn, FULL_PATH_SIZE);
+    write(sock, fn, strlen(fn));
 
-    bytes_rcvd = 0;
+    bytes_recv = 0;
     n = 1;
-    fd = fopen(fn, "w");
+    fd = fopen(fn, "wb");
     while (n > 0)
     {
         bzero(buf, BUFFER_SIZE);
@@ -59,11 +62,9 @@ int main(int argc, char const *argv[])
             error_handling("Could not fetch file\n");
         if (n == 0)
             break;
-        bytes_rcvd += strlen(buf);
-        printf("received data from tcp : %d", n);
-        fwrite(buf, strlen(buf), 1, fd);
+        fwrite(buf, n, 1, fd);
     }
-    printf("File %s saved.\n", fn);
+    printf("Received file: %s\n", fn);
     fclose(fd);
     close(sock);
     return 0;
@@ -79,21 +80,21 @@ void error_handling(char *message)
 /*
     create file received from server
 */
-int recv_file(int sock, char *full_fn)
-{
-    int fd;
-    char read_buf[BUFFER_SIZE];
-    int read_cnt;
-    int write_cnt;
+// int recv_file(int sock, char *full_fn)
+// {
+//     int fd;
+//     char read_buf[BUFFER_SIZE];
+//     int read_cnt;
+//     int write_cnt;
 
-    fd = open(full_fn, O_WRONLY | O_RDONLY | O_CREAT);
+//     fd = open(full_fn, O_WRONLY | O_RDONLY | O_CREAT);
 
-    while ((read_cnt = read(sock, read_buf, BUFFER_SIZE - 1)) != 0)
-    {
-        write(fd, read_buf, read_cnt);
-        write_cnt += read_cnt;
-    }
+//     while ((read_cnt = read(sock, read_buf, BUFFER_SIZE - 1)) != 0)
+//     {
+//         write(fd, read_buf, read_cnt);
+//         write_cnt += read_cnt;
+//     }
 
-    close(fd);
-    return write_cnt;
-}
+//     close(fd);
+//     return write_cnt;
+// }
