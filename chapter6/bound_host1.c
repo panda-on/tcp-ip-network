@@ -8,6 +8,8 @@
 #define BUF_SIZE 30
 
 void error_handling(char *msg);
+void start_service(const char* port_no);
+
 
 int main(int argc, char const *argv[])
 {
@@ -18,21 +20,21 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
-    start_service(argv[1]);
+    start_service(argv[1]); // why does start_service(argv[1]) not work???
     return 0;
 }
 
-void start_service(char *port_str)
+void start_service(const char* port_no)
 {
     int sock, msg_len;
     struct sockaddr_in my_addr, you_addr;
-    char msg[BUF_SIZE];
     socklen_t you_addr_sz;
+    char msg[BUF_SIZE];
 
     memset(&my_addr, 0, sizeof(my_addr));
     my_addr.sin_family = AF_INET;
-    my_addr.sin_addr.s_addr = inet_addr(INADDR_ANY);
-    my_addr.sin_port = htons(atoi(port_str));
+    my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    my_addr.sin_port = htons(atoi(port_no)); // htons(atoi(port_str))
 
     sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock < 0)
@@ -46,7 +48,7 @@ void start_service(char *port_str)
         sleep(5);
         you_addr_sz = sizeof(you_addr);
         msg_len = recvfrom(sock, msg, BUF_SIZE, 0, (struct sockaddr *)&you_addr, &you_addr_sz);
-        printf("Message %d : %s \n", i + 1, msg);
+        printf("Message %zd : %s \n", i + 1, msg);
     }
     close(sock);
 }

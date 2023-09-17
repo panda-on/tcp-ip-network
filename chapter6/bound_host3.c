@@ -18,23 +18,15 @@ int main(int argc, char const *argv[])
         exit(1);
     }
 
-    start_service(argv[1]);
-    return 0;
-}
-
-void start_service(char *port_str)
-{
     int sock, msg_len;
     struct sockaddr_in my_addr, you_addr;
-    char msg[BUF_SIZE];
-    char msg1[] = "Hi";
-    char msg2[] = "I'm another UDP host!";
     socklen_t you_addr_sz;
+    char msg[BUF_SIZE];
 
     memset(&my_addr, 0, sizeof(my_addr));
     my_addr.sin_family = AF_INET;
-    my_addr.sin_addr.s_addr = inet_addr(INADDR_ANY);
-    my_addr.sin_port = htons(atoi(port_str));
+    my_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+    my_addr.sin_port = htons(atoi(argv[1])); // htons(atoi(port_str))
 
     sock = socket(AF_INET, SOCK_DGRAM, 0);
     if (sock < 0)
@@ -45,12 +37,14 @@ void start_service(char *port_str)
 
     for (size_t i = 0; i < 3; i++)
     {
-        sleep(3);
+        sleep(5);
         you_addr_sz = sizeof(you_addr);
-
-        printf("Message %d : %s \n", i + 1, msg);
+        msg_len = recvfrom(sock, msg, BUF_SIZE, 0, (struct sockaddr *)&you_addr, &you_addr_sz);
+        printf("Message %zd : %s \n", i + 1, msg);
     }
     close(sock);
+
+    return 0;
 }
 
 void error_handling(char *msg)

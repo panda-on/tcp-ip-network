@@ -57,7 +57,7 @@ int main(int argc, char const *argv[])
         int len_cnt;
         while (len_cnt < op_cnt * OP_SZ + 1)
         {
-            read_len = read(clnt_sock, &operands[len_cnt], BUFFER_SIZE - 1);
+            read_len = read(clnt_sock, &operands[len_cnt], BUF_SZ- 1);
             len_cnt += read_len;
         }
         result = calculate(op_cnt, (int *)operands, operands[len_cnt - 1]);
