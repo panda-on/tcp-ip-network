@@ -9,7 +9,10 @@
 int main(int argc, char const *argv[])
 {
     if (argc != 3)
+    {
         printf("Usage: src_file_name dest_file_name\n");
+        exit(1);
+    }
 
     char buf[BUF_SIZE];
     int src_fd, dest_fd;

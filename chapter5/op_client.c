@@ -4,10 +4,12 @@
 #include <string.h>
 #include <stdlib.h>
 #include <unistd.h>
+
 #define BUF_SIZE 1024
 #define OP_SZ 4
 #define RSLT_SZ 4
 #define TMP_SZ 4
+
 void error_handling(char *message);
 
 /*
